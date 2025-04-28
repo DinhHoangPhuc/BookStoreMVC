@@ -3,8 +3,9 @@ using BookStore.Models;
 using BookStore.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookStore.Controllers
+namespace BookStore.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -28,7 +29,7 @@ namespace BookStore.Controllers
         [HttpPost]
         public IActionResult Create(Catergory category)
         {
-            if(category.Name == category.DisplayOrder.ToString())
+            if (category.Name == category.DisplayOrder.ToString())
             {
                 ModelState.AddModelError("Name", "The Display Order can not exactly match the Name");
             }

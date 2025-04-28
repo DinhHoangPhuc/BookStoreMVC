@@ -15,9 +15,5 @@ namespace BookStore.Repository
         {
             _db.Catergories.Update(category);
         }
-        public void Save()
-        {
-            _db.SaveChanges();
-        }
     }
 }

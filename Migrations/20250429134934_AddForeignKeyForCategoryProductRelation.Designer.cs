@@ -3,6 +3,7 @@ using BookStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250429134934_AddForeignKeyForCategoryProductRelation")]
+    partial class AddForeignKeyForCategoryProductRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,10 +88,6 @@ namespace BookStore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("ListPrice")
                         .HasColumnType("float");
 
@@ -116,7 +115,6 @@ namespace BookStore.Migrations
                             CategoryId = 1,
                             Description = "Introduction to C# programming",
                             ISBN = "978-1234567890",
-                            ImageUrl = "",
                             ListPrice = 150000.0,
                             Price100 = 130000.0,
                             Price50 = 140000.0,
@@ -129,7 +127,6 @@ namespace BookStore.Migrations
                             CategoryId = 2,
                             Description = "Deep dive into advanced C# concepts",
                             ISBN = "978-1234567891",
-                            ImageUrl = "",
                             ListPrice = 250000.0,
                             Price100 = 220000.0,
                             Price50 = 230000.0,
@@ -142,7 +139,6 @@ namespace BookStore.Migrations
                             CategoryId = 3,
                             Description = "Learn modern web development with ASP.NET Core",
                             ISBN = "978-1234567892",
-                            ImageUrl = "",
                             ListPrice = 300000.0,
                             Price100 = 260000.0,
                             Price50 = 280000.0,
@@ -155,7 +151,6 @@ namespace BookStore.Migrations
                             CategoryId = 1,
                             Description = "Master database interaction with Entity Framework",
                             ISBN = "978-1234567893",
-                            ImageUrl = "",
                             ListPrice = 200000.0,
                             Price100 = 170000.0,
                             Price50 = 180000.0,
@@ -168,7 +163,6 @@ namespace BookStore.Migrations
                             CategoryId = 2,
                             Description = "Learn LINQ with practical examples",
                             ISBN = "978-1234567894",
-                            ImageUrl = "",
                             ListPrice = 120000.0,
                             Price100 = 100000.0,
                             Price50 = 110000.0,
@@ -181,7 +175,6 @@ namespace BookStore.Migrations
                             CategoryId = 3,
                             Description = "Explore common design patterns in software development",
                             ISBN = "978-1234567895",
-                            ImageUrl = "",
                             ListPrice = 400000.0,
                             Price100 = 360000.0,
                             Price50 = 380000.0,
@@ -194,7 +187,6 @@ namespace BookStore.Migrations
                             CategoryId = 1,
                             Description = "Write better code with clean coding principles",
                             ISBN = "978-1234567896",
-                            ImageUrl = "",
                             ListPrice = 350000.0,
                             Price100 = 300000.0,
                             Price50 = 330000.0,
@@ -207,7 +199,6 @@ namespace BookStore.Migrations
                             CategoryId = 2,
                             Description = "Learn techniques to improve existing code",
                             ISBN = "978-1234567897",
-                            ImageUrl = "",
                             ListPrice = 300000.0,
                             Price100 = 260000.0,
                             Price50 = 280000.0,
@@ -220,7 +211,6 @@ namespace BookStore.Migrations
                             CategoryId = 3,
                             Description = "Understand agile practices in software development",
                             ISBN = "978-1234567898",
-                            ImageUrl = "",
                             ListPrice = 220000.0,
                             Price100 = 180000.0,
                             Price50 = 200000.0,
@@ -233,7 +223,6 @@ namespace BookStore.Migrations
                             CategoryId = 1,
                             Description = "Guide to implementing DevOps culture",
                             ISBN = "978-1234567899",
-                            ImageUrl = "",
                             ListPrice = 500000.0,
                             Price100 = 450000.0,
                             Price50 = 480000.0,

@@ -1,0 +1,116 @@
+﻿using BookStore.Data;
+using BookStore.Models;
+using BookStore.Repository.IRepository;
+using BookStore.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace BookStore.Areas.Admin.Controllers
+{
+    [Area("Admin")]
+    public class ProductController : Controller
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _hostEnvironment;
+
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+        {
+            _unitOfWork = unitOfWork;
+            _hostEnvironment = webHostEnvironment;
+        }
+
+        public IActionResult Index()
+        {
+            var products = _unitOfWork.ProductRepository.GetAll().ToList();
+            return View(products);
+        }
+
+        public IActionResult Upsert(int? id)
+        {
+            IEnumerable<SelectListItem> categoryList = _unitOfWork.CategoryRepository.GetAll()
+                .Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+
+            //ViewBag.CategoryList = categoryList;
+            ProductVM productVM = new()
+            {
+                Product = new(),
+                CategoryList = categoryList
+            };
+
+            if(id == null || id == 0)
+            {
+                // Create Product
+                return View(productVM);
+            }
+            else
+            {
+                // Update Product
+                productVM.Product = _unitOfWork.ProductRepository.Get(c => c.Id == id);
+                if (productVM.Product == null)
+                {
+                    return NotFound();
+                }
+                return View(productVM);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Upsert(ProductVM productVM, IFormFile? file)
+        {
+            if (ModelState.IsValid)
+            {
+                string wwwRootPath = _hostEnvironment.WebRootPath;
+                if (file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string productPath = Path.Combine(wwwRootPath, @"images\product");
+
+                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    productVM.Product.ImageUrl = @"images\product" + fileName;
+                }
+
+                _unitOfWork.ProductRepository.Add(productVM.Product);
+                _unitOfWork.Save();
+                TempData["success"] = "Product created successfully";
+                return RedirectToAction("Index");
+            }
+            return View(productVM);
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            Product? productFromDb = _unitOfWork.ProductRepository.Get(c => c.Id == id);
+            if (productFromDb == null)
+            {
+                return NotFound();
+            }
+            return View(productFromDb);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeletePost(int? id)
+        {
+            Product? productFromDb = _unitOfWork.ProductRepository.Get(c => c.Id == id);
+            if (productFromDb == null)
+            {
+                return NotFound();
+            }
+            _unitOfWork.ProductRepository.Remove(productFromDb);
+            _unitOfWork.Save();
+            TempData["success"] = "Product deleted successfully";
+            return RedirectToAction("Index");
+        }
+    }
+}

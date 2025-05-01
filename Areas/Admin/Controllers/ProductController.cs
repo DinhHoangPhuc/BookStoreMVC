@@ -103,33 +103,33 @@ namespace BookStore.Areas.Admin.Controllers
             return View(productVM);
         }
 
-        public IActionResult Delete(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            Product? productFromDb = _unitOfWork.ProductRepository.Get(c => c.Id == id);
-            if (productFromDb == null)
-            {
-                return NotFound();
-            }
-            return View(productFromDb);
-        }
+        //public IActionResult Delete(int? id)
+        //{
+        //    if (id == null || id == 0)
+        //    {
+        //        return NotFound();
+        //    }
+        //    Product? productFromDb = _unitOfWork.ProductRepository.Get(c => c.Id == id);
+        //    if (productFromDb == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(productFromDb);
+        //}
 
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePost(int? id)
-        {
-            Product? productFromDb = _unitOfWork.ProductRepository.Get(c => c.Id == id);
-            if (productFromDb == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.ProductRepository.Remove(productFromDb);
-            _unitOfWork.Save();
-            TempData["success"] = "Product deleted successfully";
-            return RedirectToAction("Index");
-        }
+        //[HttpPost, ActionName("Delete")]
+        //public IActionResult DeletePost(int? id)
+        //{
+        //    Product? productFromDb = _unitOfWork.ProductRepository.Get(c => c.Id == id);
+        //    if (productFromDb == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    _unitOfWork.ProductRepository.Remove(productFromDb);
+        //    _unitOfWork.Save();
+        //    TempData["success"] = "Product deleted successfully";
+        //    return RedirectToAction("Index");
+        //}
 
         #region API
         [HttpGet]
@@ -137,6 +137,24 @@ namespace BookStore.Areas.Admin.Controllers
         {
             var products = _unitOfWork.ProductRepository.GetAll(includedProperties:"Catergory");
             return Json(new {Data = products});
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            Product? productFromDb = _unitOfWork.ProductRepository.Get(c => c.Id == id);
+            if (productFromDb == null)
+            {
+                return Json( new {success = false, message = "Error while deleting"});
+            }
+            var oldImagePath = Path.Combine(_hostEnvironment.WebRootPath, productFromDb.ImageUrl.TrimStart('\\'));
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Delete(oldImagePath);
+            }
+            _unitOfWork.ProductRepository.Remove(productFromDb);
+            _unitOfWork.Save();
+            return Json(new { success = true, message = "Delete successful" });
         }
         #endregion
     }

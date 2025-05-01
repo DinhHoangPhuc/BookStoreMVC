@@ -21,7 +21,7 @@ namespace BookStore.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var products = _unitOfWork.ProductRepository.GetAll().ToList();
+            var products = _unitOfWork.ProductRepository.GetAll(includedProperties:"Catergory").ToList();
             return View(products);
         }
 
@@ -130,5 +130,14 @@ namespace BookStore.Areas.Admin.Controllers
             TempData["success"] = "Product deleted successfully";
             return RedirectToAction("Index");
         }
+
+        #region API
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var products = _unitOfWork.ProductRepository.GetAll(includedProperties:"Catergory");
+            return Json(new {Data = products});
+        }
+        #endregion
     }
 }

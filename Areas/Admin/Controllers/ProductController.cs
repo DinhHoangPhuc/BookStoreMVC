@@ -25,6 +25,8 @@ namespace BookStore.Areas.Admin.Controllers
             return View(products);
         }
 
+        
+
         public IActionResult Upsert(int? id)
         {
             IEnumerable<SelectListItem> categoryList = _unitOfWork.CategoryRepository.GetAll()

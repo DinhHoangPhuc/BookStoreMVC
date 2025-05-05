@@ -27,6 +27,15 @@ namespace BookStore
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
             builder.Services.AddRazorPages();
+
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IEmailSender, EmailSender>();
             var app = builder.Build();
@@ -45,6 +54,7 @@ namespace BookStore
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSession();
             app.MapRazorPages();
             app.MapControllerRoute(
                 name: "default",

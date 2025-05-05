@@ -32,6 +32,9 @@
                             <a asp-action="Detail" asp-route-id="@product.Id" class="btn btn-primary bg-gradient border-0 form-control">
                                 Detail
                             </a>
+                            <a asp-action="AddToCart" asp-controller="Cart" asp-route-productId="@product.Id" class="btn btn-secondary bg-gradient border-0 form-control mt-2">
+                                Add To Cart
+                            </a>
                         </div>
                     </div>
                 </div>

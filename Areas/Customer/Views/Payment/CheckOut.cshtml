@@ -1,0 +1,44 @@
+﻿<div class="py-5 text-center">
+    <h2>Checkout</h2>
+    <p class="lead">Click the button below to proceed with your payment using Stripe.</p>
+    <button type="button" id="checkout-button" class="btn btn-primary">Pay with Stripe</button>
+</div>
+
+@section Scripts {
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        $(document).ready(function () {
+            var stripe = Stripe('@ViewBag.PublishableKey');
+            var checkoutButton = document.getElementById('checkout-button');
+            checkoutButton.addEventListener('click', function () {
+                fetch('@Url.Action("CreateCheckoutSession", "Payment")', {
+                    method: 'POST',
+                })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(function (payload) {
+                    if (!payload.sessionId) {
+                        throw new Error('Session ID is missing in the response');
+                    }
+                    console.log('Session ID:', payload.sessionId);
+                    return stripe.redirectToCheckout({ sessionId: String(payload.sessionId) });
+
+                    // if (!payload.url) throw new Error('Checkout URL is missing');
+                    // window.location.href = payload.url;
+                })
+                .then(function (result) {
+                    if (result.error) {
+                        alert(result.error.message);
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+}

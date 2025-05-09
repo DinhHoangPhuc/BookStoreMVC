@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BookStore.Utility;
+using Stripe;
 
 namespace BookStore
 {
@@ -27,6 +28,17 @@ namespace BookStore
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
             builder.Services.AddRazorPages();
+            
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowAllOrigins",
+            //        builder =>
+            //        {
+            //            builder.WithOrigins("https://8792-2a09-bac5-d46e-15f-00-23-1ef.ngrok-free.app/Customer/Payment/CreateCheckoutSession")
+            //                   .AllowAnyMethod()
+            //                   .AllowAnyHeader();
+            //        });
+            //});
 
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
@@ -38,7 +50,12 @@ namespace BookStore
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+
             var app = builder.Build();
+
+            //app.UseCors("AllowAllOrigins");
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -52,6 +69,7 @@ namespace BookStore
             app.UseStaticFiles();
 
             app.UseRouting();
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
